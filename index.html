@@ -1,475 +1,221 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="zh-CN">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.3">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>斗地主（简化可玩 Web 版）</title>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;margin:0;background:#0f172a;color:#e5e7eb}
+    header{padding:16px 20px;border-bottom:1px solid #334155;display:flex;gap:12px;align-items:center}
+    header h1{font-size:16px;margin:0;color:#fff}
+    header .tag{font-size:12px;padding:4px 8px;border:1px solid #334155;border-radius:999px;color:#cbd5e1}
+    main{padding:14px;max-width:1100px;margin:0 auto}
+    .card{background:#111827;border:1px solid #334155;border-radius:14px;padding:14px}
+    .pile{min-height:54px;border:1px dashed #334155;border-radius:14px;padding:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .playingCard{user-select:none;display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:54px;padding:0 10px;background:#0b1220;border:1px solid #334155;border-radius:12px;cursor:pointer;font-weight:600}
+    .playingCard.selected{outline:2px solid #22c55e;border-color:#22c55e}
+    .btn{border:1px solid #334155;background:#0b1220;color:#fff;padding:10px 12px;border-radius:12px;cursor:pointer}
+    .btn.primary{background:#2563eb;border-color:#2563eb}
+    .btn.danger{background:#dc2626;border-color:#dc2626}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+    .muted{color:#94a3b8;font-size:12px}
+    .log{margin-top:10px;height:260px;overflow:auto;white-space:pre-wrap;background:#0b1220;border:1px solid #334155;border-radius:14px;padding:10px;font-size:12px}
   </style>
 </head>
 <body>
-<p class="p1">&lt;!doctype html&gt;</p>
-<p class="p1">&lt;html lang="zh-CN"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width,initial-scale=1" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;斗地主（简化可玩 Web 版）&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>body{font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>margin:0;background:#0f172a;color:#e5e7eb}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>header{padding:16px 20px;border-bottom:1px solid #334155;display:flex;gap:12px;align-items:center}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>header h1{font-size:16px;margin:0;color:#fff}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>header .tag{font-size:12px;padding:4px 8px;border:1px solid #334155;border-radius:999px;color:#cbd5e1}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>main{display:grid;grid-template-columns: 1fr 340px;gap:14px;padding:14px;max-width:1200px;margin:0 auto}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.card{background:#111827;border:1px solid #334155;border-radius:14px;padding:14px}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.col{display:flex;flex-direction:column;gap:8px}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.muted{color:#94a3b8;font-size:12px}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn{border:1px solid #334155;background:#0b1220;color:#fff;padding:10px 12px;border-radius:12px;cursor:pointer}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn:hover{background:#0b1530}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn:disabled{opacity:.45;cursor:not-allowed}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn.primary{background:#2563eb;border-color:#2563eb}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn.primary:hover{background:#1d4ed8}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn.danger{background:#dc2626;border-color:#dc2626}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.btn.danger:hover{background:#b91c1c}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.pile{min-height:54px;border:1px dashed #334155;border-radius:14px;padding:10px;display:flex;gap:8px;flex-wrap:wrap}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.playingCard{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>user-select:none;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>display:inline-flex;align-items:center;justify-content:center;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>min-width:44px;height:54px;padding:0 10px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>background:#0b1220;border:1px solid #334155;border-radius:12px;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>cursor:pointer;font-weight:600</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.playingCard.selected{outline:2px solid #22c55e;border-color:#22c55e}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.playingCard.small{min-width:30px;height:40px;font-size:12px;padding:0 6px;cursor:default}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.badge{font-size:12px;border:1px solid #334155;border-radius:999px;padding:4px 8px;color:#cbd5e1}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.log{height:420px;overflow:auto;white-space:pre-wrap;background:#0b1220;border:1px solid #334155;border-radius:14px;padding:10px;font-size:12px}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.hint{font-size:12px;color:#cbd5e1;line-height:1.5}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.split{display:flex;gap:10px;align-items:center;justify-content:space-between}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.aiHand{display:flex;gap:6px;flex-wrap:wrap}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.win{font-size:18px;color:#22c55e;font-weight:700}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>.lose{font-size:18px;color:#f97316;font-weight:700}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1">&lt;header&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;斗地主（简化可玩 Web 版）&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;span class="tag"&gt;你 vs 2 AI&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;span class="tag"&gt;支持：单/对/三/三带一/三带二&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;span class="tag"&gt;不支持：顺子/连对/炸弹/飞机/叫地主&lt;/span&gt;</p>
-<p class="p1">&lt;/header&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;main&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;section class="card col"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="split"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="badge" id="turnBadge"&gt;回合：-&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="badge" id="lastBadge"&gt;上一手：-&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn primary" id="newBtn"&gt;新开一局&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn" id="passBtn"&gt;过牌&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn danger" id="playBtn"&gt;出牌&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="row"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="col" style="flex:1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="muted"&gt;AI-1（剩 &lt;span id="ai1Count"&gt;0&lt;/span&gt; 张）&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="aiHand" id="ai1Hand"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="col" style="flex:1"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="muted"&gt;AI-2（剩 &lt;span id="ai2Count"&gt;0&lt;/span&gt; 张）&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="aiHand" id="ai2Hand"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="col"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="muted"&gt;牌桌（当前轮次出的牌）&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="pile" id="tablePile"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="col"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="muted"&gt;你的手牌（点击选中，支持多选）&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="pile" id="myPile"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="hint"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>规则提示：&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>1) 你是“地主”（先手，手牌 20 张）。&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>2) 首出不能过牌。&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>3) 只能用相同牌型压制上一手。&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>4) 如果所有人都过牌，轮次重置，重新首出。</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="result" style="margin-top:6px;"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/section&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;aside class="card col"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="split"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="muted"&gt;日志&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn" id="clearLogBtn"&gt;清空&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="log" id="log"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="hint"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>这是“可玩版”。要升级到完整版（叫地主/顺子/炸弹/飞机/更强 AI），我也能继续给你迭代。</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/aside&gt;</p>
-<p class="p1">&lt;/main&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const RANKS = ['3','4','5','6','7','8','9','10','J','Q','K','A','2','SJ','BJ'];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const RANK_VALUE = Object.fromEntries(RANKS.map((r,i)=&gt;[r,i]));</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const els = {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>myPile: document.getElementById('myPile'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>tablePile: document.getElementById('tablePile'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>ai1Hand: document.getElementById('ai1Hand'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>ai2Hand: document.getElementById('ai2Hand'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>ai1Count: document.getElementById('ai1Count'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>ai2Count: document.getElementById('ai2Count'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>turnBadge: document.getElementById('turnBadge'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>lastBadge: document.getElementById('lastBadge'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>log: document.getElementById('log'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>result: document.getElementById('result'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>newBtn: document.getElementById('newBtn'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>playBtn: document.getElementById('playBtn'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>passBtn: document.getElementById('passBtn'),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>clearLogBtn: document.getElementById('clearLogBtn'),</p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>let hands = [[],[],[]]; // 0: you, 1: ai1, 2: ai2</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let selected = new Set(); // selected indices in your hand</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let turn = 0; // 0 you, 1 ai1, 2 ai2</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let last = null; // {type,cards,main}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let lastPlayer = null; // last non-pass player index</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function log(msg){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.log.textContent += msg + "\n";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.log.scrollTop = els.log.scrollHeight;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function buildDeck(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const deck = [];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of RANKS.slice(0,-2)) for (let i=0;i&lt;4;i++) deck.push(r);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>deck.push('SJ','BJ');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (let i=deck.length-1;i&gt;0;i--){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const j = Math.floor(Math.random()*(i+1));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>[deck[i],deck[j]] = [deck[j],deck[i]];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return deck;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function sortHand(hand){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hand.sort((a,b)=&gt;RANK_VALUE[a]-RANK_VALUE[b]);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return hand;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function classify(cards){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!cards || !cards.length) return null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const c = {};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of cards) c[r]=(c[r]||0)+1;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const counts = Object.values(c).sort((a,b)=&gt;b-a);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const keys = Object.keys(c);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (cards.length === 1) return {type:"single", cards:[...cards], main: cards[0]};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (cards.length === 2 &amp;&amp; keys.length === 1) return {type:"pair", cards:[...cards], main: keys[0]};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (cards.length === 3 &amp;&amp; keys.length === 1) return {type:"triple", cards:[...cards], main: keys[0]};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (cards.length === 4 &amp;&amp; counts.join(',') === '3,1'){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const main = keys.find(k=&gt;c[k]===3);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return {type:"triple_single", cards:[...cards], main};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (cards.length === 5 &amp;&amp; counts.join(',') === '3,2'){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const main = keys.find(k=&gt;c[k]===3);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return {type:"triple_pair", cards:[...cards], main};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function beats(a,b){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!b) return true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (a.type !== b.type) return false;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return RANK_VALUE[a.main] &gt; RANK_VALUE[b.main];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function canRemove(hand, cards){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const c = {};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of hand) c[r]=(c[r]||0)+1;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of cards){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!c[r]) return false;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>c[r]--;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return true;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function removeCards(hand, cards){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of cards){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const idx = hand.indexOf(r);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (idx&gt;=0) hand.splice(idx,1);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function aiPlay(hand, lastHand){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>sortHand(hand);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const counts = {};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of hand) counts[r]=(counts[r]||0)+1;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ranks = Object.keys(counts).sort((a,b)=&gt;RANK_VALUE[a]-RANK_VALUE[b]);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const plays = [];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// singles</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of ranks) plays.push({type:"single", cards:[r], main:r});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// pairs</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of ranks) if (counts[r]&gt;=2) plays.push({type:"pair", cards:[r,r], main:r});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// triples</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of ranks) if (counts[r]&gt;=3) plays.push({type:"triple", cards:[r,r,r], main:r});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// triple+single</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of ranks){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (counts[r]&gt;=3){</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const s = ranks.find(x=&gt;x!==r &amp;&amp; counts[x]&gt;=1);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (s) plays.push({type:"triple_single", cards:[r,r,r,s], main:r});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// triple+pair</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const r of ranks){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (counts[r]&gt;=3){</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const p = ranks.find(x=&gt;x!==r &amp;&amp; counts[x]&gt;=2);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (p) plays.push({type:"triple_pair", cards:[r,r,r,p,p], main:r});</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!lastHand){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const order = {triple_pair:0, triple_single:1, triple:2, pair:3, single:4};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>plays.sort((x,y)=&gt; (order[x.type]-order[y.type]) || (RANK_VALUE[x.main]-RANK_VALUE[y.main]));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return plays[0] || null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const same = plays.filter(p=&gt;p.type===lastHand.type &amp;&amp; beats(p,lastHand));</p>
-<p class="p1"><span class="Apple-converted-space">      </span>same.sort((x,y)=&gt;RANK_VALUE[x.main]-RANK_VALUE[y.main]);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return same[0] || null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function render(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.ai1Count.textContent = hands[1].length;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.ai2Count.textContent = hands[2].length;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.turnBadge.textContent = `回合：${turn===0?'你(地主)':turn===1?'AI-1':'AI-2'}`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!last) els.lastBadge.textContent = "上一手：无";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else els.lastBadge.textContent = `上一手：${labelType(last.type)} ${last.cards.join(' ')}（主:${last.main}）`;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// table</p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.tablePile.innerHTML = "";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (last){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>for (const r of last.cards){</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const el = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>el.className = "playingCard small";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>el.textContent = r;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>els.tablePile.appendChild(el);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// AIs show as back cards</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const renderAI = (container, n) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>container.innerHTML = "";</p>
-<p class="p1"><span class="Apple-converted-space">      </span>for (let i=0;i&lt;Math.min(n, 20); i++){</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const el = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>el.className = "playingCard small";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>el.textContent = "🂠";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>container.appendChild(el);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (n&gt;20){</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const el = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>el.className = "playingCard small";</p>
-<p class="p1"><span class="Apple-converted-space">        </span>el.textContent = `+${n-20}`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>container.appendChild(el);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>renderAI(els.ai1Hand, hands[1].length);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>renderAI(els.ai2Hand, hands[2].length);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// you</p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.myPile.innerHTML = "";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>sortHand(hands[0]);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hands[0].forEach((r,idx)=&gt;{</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const el = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>el.className = "playingCard" + (selected.has(idx) ? " selected" : "");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>el.textContent = r;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>el.onclick = () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (turn !== 0) return;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (selected.has(idx)) selected.delete(idx); else selected.add(idx);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>els.myPile.appendChild(el);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// button states</p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.playBtn.disabled = (turn !== 0);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.passBtn.disabled = (turn !== 0) || (last === null); // first lead cannot pass</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function labelType(t){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return ({</p>
-<p class="p1"><span class="Apple-converted-space">      </span>single:"单张",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>pair:"对子",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>triple:"三张",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>triple_single:"三带一",</p>
-<p class="p1"><span class="Apple-converted-space">      </span>triple_pair:"三带二"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>})[t] || t;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function setResult(html){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.result.innerHTML = html || "";</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function checkWin(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (hands[0].length === 0){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setResult(`&lt;div class="win"&gt;🏁 你赢了！&lt;/div&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (hands[1].length === 0){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setResult(`&lt;div class="lose"&gt;🏁 AI-1 赢了！&lt;/div&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (hands[2].length === 0){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setResult(`&lt;div class="lose"&gt;🏁 AI-2 赢了！&lt;/div&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return true;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return false;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function resetTrickIfNeeded(nextTurn){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (lastPlayer !== null &amp;&amp; nextTurn === lastPlayer){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>last = null;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>lastPlayer = null;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>log("✅ 一轮结束，重新首出。");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>async function stepAI(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (checkWin()) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (turn === 0) { render(); return; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>// small delay for feel</p>
-<p class="p1"><span class="Apple-converted-space">    </span>await new Promise(r=&gt;setTimeout(r, 350));</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const h = hands[turn];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const play = aiPlay(h, last);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!play){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!last){</p>
-<p class="p1"><span class="Apple-converted-space">        </span>// force lead (shouldn't happen)</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const forced = aiPlay(h, null);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (forced){</p>
-<p class="p1"><span class="Apple-converted-space">          </span>removeCards(h, forced.cards);</p>
-<p class="p1"><span class="Apple-converted-space">          </span>last = forced;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>lastPlayer = turn;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>log(`${turn===1?'AI-1':'AI-2'} 出牌：${forced.cards.join(' ')}（${labelType(forced.type)} 主:${forced.main}）`);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>log(`${turn===1?'AI-1':'AI-2'} 过牌。`);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>removeCards(h, play.cards);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>last = play;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>lastPlayer = turn;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>log(`${turn===1?'AI-1':'AI-2'} 出牌：${play.cards.join(' ')}（${labelType(play.type)} 主:${play.main}）`);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const next = (turn + 1) % 3;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>resetTrickIfNeeded(next);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>turn = next;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>render();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (turn !== 0 &amp;&amp; !checkWin()) stepAI();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function newGame(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>setResult("");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>selected.clear();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const deck = buildDeck();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hands = [</p>
-<p class="p1"><span class="Apple-converted-space">      </span>deck.slice(0,17),</p>
-<p class="p1"><span class="Apple-converted-space">      </span>deck.slice(17,34),</p>
-<p class="p1"><span class="Apple-converted-space">      </span>deck.slice(34,51),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// give you 3 extra as "landlord"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hands[0] = hands[0].concat(deck.slice(51));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>hands.forEach(sortHand);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>turn = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>last = null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>lastPlayer = null;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>els.log.textContent = "";</p>
-<p class="p1"><span class="Apple-converted-space">    </span>log("🎮 新开一局：你是地主（先手 20 张）。");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function playSelected(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (turn !== 0) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const idxs = Array.from(selected).sort((a,b)=&gt;a-b);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!idxs.length){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setResult(`&lt;div class="muted"&gt;没选牌。&lt;/div&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const cards = idxs.map(i=&gt;hands[0][i]);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!canRemove(hands[0], cards)){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setResult(`&lt;div class="muted"&gt;选牌异常（请重选）。&lt;/div&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>selected.clear();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const h = classify(cards);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!h){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setResult(`&lt;div class="muted"&gt;不支持的牌型。只支持：单/对/三/三带一/三带二。&lt;/div&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (last &amp;&amp; !beats(h, last)){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setResult(`&lt;div class="muted"&gt;压不住上一手（或牌型不一致）。&lt;/div&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// lead cannot pass already handled</p>
-<p class="p1"><span class="Apple-converted-space">    </span>removeCards(hands[0], cards);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>last = h;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>lastPlayer = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>log(`你 出牌：${cards.join(' ')}（${labelType(h.type)} 主:${h.main}）`);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>selected.clear();</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const next = 1;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>turn = next;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!checkWin()) stepAI();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>function pass(){</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (turn !== 0) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!last){</p>
-<p class="p1"><span class="Apple-converted-space">      </span>setResult(`&lt;div class="muted"&gt;首出不能过牌。&lt;/div&gt;`);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>log("你 过牌。");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>selected.clear();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const next = 1;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>resetTrickIfNeeded(next);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>turn = next;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!checkWin()) stepAI();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Wire</p>
-<p class="p1"><span class="Apple-converted-space">  </span>els.newBtn.onclick = newGame;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>els.playBtn.onclick = playSelected;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>els.passBtn.onclick = pass;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>els.clearLogBtn.onclick = () =&gt; els.log.textContent = "";</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Start</p>
-<p class="p1"><span class="Apple-converted-space">  </span>newGame();</p>
-<p class="p1">})();</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+<header>
+  <h1>斗地主（简化可玩 Web 版）</h1>
+  <span class="tag">你 vs 2 AI</span>
+  <span class="tag">支持：单/对/三/三带一/三带二</span>
+</header>
+
+<main>
+  <div class="card">
+    <div class="row">
+      <div class="muted" id="status">回合：-｜上一手：无</div>
+      <div class="row" style="justify-content:flex-end">
+        <button class="btn primary" id="newBtn">新开一局</button>
+        <button class="btn" id="passBtn">过牌</button>
+        <button class="btn danger" id="playBtn">出牌</button>
+      </div>
+    </div>
+
+    <div style="margin-top:10px" class="muted">牌桌</div>
+    <div class="pile" id="tablePile"></div>
+
+    <div style="margin-top:10px" class="muted">你的手牌（点击选中）</div>
+    <div class="pile" id="myPile"></div>
+
+    <div class="log" id="log"></div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const RANKS = ['3','4','5','6','7','8','9','10','J','Q','K','A','2','SJ','BJ'];
+  const V = Object.fromEntries(RANKS.map((r,i)=>[r,i]));
+
+  const $ = (id)=>document.getElementById(id);
+  const myPile = $("myPile"), tablePile = $("tablePile"), logEl = $("log"), status = $("status");
+  const newBtn = $("newBtn"), passBtn = $("passBtn"), playBtn = $("playBtn");
+
+  let hands = [[],[],[]]; // 0 you
+  let selected = new Set(); // indices
+  let turn = 0; // 0 you 1 ai1 2 ai2
+  let last = null; // {type,cards,main}
+  let lastPlayer = null;
+
+  function log(s){ logEl.textContent += s + "\n"; logEl.scrollTop = logEl.scrollHeight; }
+  function sort(h){ h.sort((a,b)=>V[a]-V[b]); return h; }
+
+  function deck(){
+    const d=[];
+    for (const r of RANKS.slice(0,-2)) for(let i=0;i<4;i++) d.push(r);
+    d.push('SJ','BJ');
+    for(let i=d.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [d[i],d[j]]=[d[j],d[i]]; }
+    return d;
+  }
+
+  function classify(cards){
+    if(!cards.length) return null;
+    const c={}; cards.forEach(r=>c[r]=(c[r]||0)+1);
+    const keys=Object.keys(c), counts=Object.values(c).sort((a,b)=>b-a).join(',');
+    if(cards.length===1) return {type:"single",cards:[...cards],main:cards[0]};
+    if(cards.length===2 && keys.length===1) return {type:"pair",cards:[...cards],main:keys[0]};
+    if(cards.length===3 && keys.length===1) return {type:"triple",cards:[...cards],main:keys[0]};
+    if(cards.length===4 && counts==="3,1") return {type:"triple_single",cards:[...cards],main:keys.find(k=>c[k]===3)};
+    if(cards.length===5 && counts==="3,2") return {type:"triple_pair",cards:[...cards],main:keys.find(k=>c[k]===3)};
+    return null;
+  }
+  function beats(a,b){ if(!b) return true; if(a.type!==b.type) return false; return V[a.main]>V[b.main]; }
+  function remove(hand,cards){ cards.forEach(r=>hand.splice(hand.indexOf(r),1)); }
+
+  function aiPlay(hand,last){
+    sort(hand);
+    const cnt={}; hand.forEach(r=>cnt[r]=(cnt[r]||0)+1);
+    const ranks=Object.keys(cnt).sort((a,b)=>V[a]-V[b]);
+    const plays=[];
+    ranks.forEach(r=>plays.push({type:"single",cards:[r],main:r}));
+    ranks.forEach(r=>cnt[r]>=2 && plays.push({type:"pair",cards:[r,r],main:r}));
+    ranks.forEach(r=>cnt[r]>=3 && plays.push({type:"triple",cards:[r,r,r],main:r}));
+    ranks.forEach(r=>{
+      if(cnt[r]>=3){
+        const s=ranks.find(x=>x!==r && cnt[x]>=1);
+        if(s) plays.push({type:"triple_single",cards:[r,r,r,s],main:r});
+      }
+    });
+    ranks.forEach(r=>{
+      if(cnt[r]>=3){
+        const p=ranks.find(x=>x!==r && cnt[x]>=2);
+        if(p) plays.push({type:"triple_pair",cards:[r,r,r,p,p],main:r});
+      }
+    });
+
+    if(!last){
+      const order={triple_pair:0,triple_single:1,triple:2,pair:3,single:4};
+      plays.sort((x,y)=>(order[x.type]-order[y.type])||(V[x.main]-V[y.main]));
+      return plays[0]||null;
+    }
+    const same=plays.filter(p=>p.type===last.type && beats(p,last));
+    same.sort((x,y)=>V[x.main]-V[y.main]);
+    return same[0]||null;
+  }
+
+  function render(){
+    // status
+    const tn = turn===0?"你(地主)":turn===1?"AI-1":"AI-2";
+    const ls = last ? `${last.type} ${last.cards.join(' ')}(主:${last.main})` : "无";
+    status.textContent = `回合：${tn}｜上一手：${ls}`;
+    passBtn.disabled = (turn!==0) || (last===null);
+    playBtn.disabled = (turn!==0);
+
+    // table
+    tablePile.innerHTML="";
+    (last?.cards||[]).forEach(r=>{
+      const el=document.createElement("div"); el.className="playingCard"; el.textContent=r; el.style.cursor="default";
+      tablePile.appendChild(el);
+    });
+
+    // my hand
+    myPile.innerHTML="";
+    sort(hands[0]);
+    hands[0].forEach((r,idx)=>{
+      const el=document.createElement("div");
+      el.className="playingCard"+(selected.has(idx)?" selected":"");
+      el.textContent=r;
+      el.onclick=()=>{ if(turn!==0) return; selected.has(idx)?selected.delete(idx):selected.add(idx); render(); };
+      myPile.appendChild(el);
+    });
+  }
+
+  function resetIfNeeded(next){
+    if(lastPlayer!==null && next===lastPlayer){ last=null; lastPlayer=null; log("✅ 一轮结束，重新首出。"); }
+  }
+
+  async function stepAI(){
+    if(hands.some(h=>h.length===0)) return;
+    if(turn===0){ render(); return; }
+    await new Promise(r=>setTimeout(r,250));
+    const h=hands[turn];
+    const play=aiPlay(h,last);
+    if(!play){
+      log(`${turn===1?"AI-1":"AI-2"} 过牌。`);
+    }else{
+      remove(h,play.cards);
+      last=play; lastPlayer=turn;
+      log(`${turn===1?"AI-1":"AI-2"} 出牌：${play.cards.join(' ')}（${play.type} 主:${play.main}）`);
+    }
+    const next=(turn+1)%3;
+    resetIfNeeded(next);
+    turn=next;
+    render();
+    if(turn!==0) stepAI();
+  }
+
+  function newGame(){
+    logEl.textContent="";
+    selected.clear();
+    const d=deck();
+    hands=[d.slice(0,17),d.slice(17,34),d.slice(34,51)];
+    hands[0]=hands[0].concat(d.slice(51)); //地主
+    hands.forEach(sort);
+    turn=0; last=null; lastPlayer=null;
+    log("🎮 新开一局：你是地主（先手 20 张）");
+    render();
+  }
+
+  function play(){
+    if(turn!==0) return;
+    const idxs=[...selected].sort((a,b)=>a-b);
+    if(!idxs.length){ log("你没选牌。"); return; }
+    const cards=idxs.map(i=>hands[0][i]);
+    const h=classify(cards);
+    if(!h){ log("❌ 不支持的牌型（只支持：单/对/三/三带一/三带二）"); return; }
+    if(last && !beats(h,last)){ log("❌ 压不住上一手 / 牌型不一致"); return; }
+    remove(hands[0],cards);
+    last=h; lastPlayer=0;
+    log(`你 出牌：${cards.join(' ')}（${h.type} 主:${h.main}）`);
+    selected.clear();
+    turn=1; render(); stepAI();
+  }
+
+  function pass(){
+    if(turn!==0) return;
+    if(!last){ log("❌ 首出不能过牌"); return; }
+    log("你 过牌。");
+    selected.clear();
+    const next=1;
+    resetIfNeeded(next);
+    turn=next;
+    render(); stepAI();
+  }
+
+  newBtn.onclick=newGame;
+  playBtn.onclick=play;
+  passBtn.onclick=pass;
+
+  newGame();
+})();
+</script>
 </body>
 </html>
